@@ -1,0 +1,38 @@
+groups:
+- name: system
+  rules:
+  - alert: mesos主机CPU使用过高
+    expr: ceil(cpu_usage_system{cpu="cpu-total"} + cpu_usage_guest{cpu="cpu-total"} + cpu_usage_user{cpu="cpu-total"}) > 85
+    for: 60s
+    labels:
+      severity: 严重
+    annotations:
+      summary: 主机{{$labels.host}}-CPU使用率{{$value}}%!
+      description: IP={{$labels.instance}}
+      
+  - alert: mesos主机内存使用过高
+    expr: mem_used_percent > 85
+    for: 60s
+    labels:
+      severity: 严重
+    annotations:
+      summary: 主机{{$labels.host}}-内存使用率{{$value}}%!
+      description: IP={{$labels.instance}}
+      
+  - alert: mesos主机磁盘使用过高
+    expr: ceil(disk_used_percent{device!~"overlay|tmpfs|devtmpfs",path!~"/var/lib/(/|.)*"}) > 80
+    for: 1m
+    labels:
+      severity: 警告
+    annotations:
+      summary: 主机{{$labels.host}}-磁盘使用率{{$value}}%!
+      description: 磁盘路径={{$labels.path}},IP={{$labels.instance}}
+      
+  - alert: mesos主机磁盘inodes过高
+    expr: ceil((disk_inodes_used{device!~"overlay|devtmpfs|tmpfs",path!~"/var/lib/(/|.)*"} / disk_inodes_total{device!~"overlay|devtmpfs|tmpfs",path!~"/var/lib/(/|.)*"}) * 100 ) > 90
+    for: 1m
+    labels:
+      severity: 警告
+    annotations:
+      summary: 主机{{$labels.host}}-磁盘indoes使用率{{$value}}%!
+      description: 磁盘路径={{$labels.path}},IP={{$labels.instance}}

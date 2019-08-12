@@ -1,0 +1,86 @@
+groups:
+- name: marathon
+  rules:
+  - alert: Marathon运行状态
+    expr: up{job="marathon"} == 0
+    for: 30s
+    labels:
+      severity: 警告
+    annotations:
+      summary: Marathon实例出现异常!
+      description: "{{$labels.instance}}实例可能关闭或重启, 请检查Marathon服务"
+      
+  - alert: Marathon master集群检测
+    expr: sum(up{job="master-metrics"}) < 2
+    for: 30s
+    labels:
+      severity: 严重
+    annotations:
+      summary: Marathon master实例数量小于2, 集群异常!
+      description: 当前实例数={{ $value }} 
+
+  - alert: Marathon Heap使用率
+    expr: avg_over_time(marathon_jvm_memory_heap_used_gauge_bytes[30s]) > (2 * 1024 * 1024 * 1024)
+    for: 30s
+    labels:
+      severity: 严重
+    annotations:
+      summary: Marathon的JVM Heap 已超过2G!
+      description: 当前JVM.Heap={{ $value }}
+
+  - alert: Marathon-JVM 线程数检测
+    expr: avg_over_time(marathon_jvm_threads_active_gauge[30s]) > 300
+    for: 30s
+    labels:
+      severity: 严重
+    annotations:
+      summary: Marathon-JVM 线程数已超过300!
+      description: 当前线程数={{ $value }}
+
+  - alert: Marathon Dismissed任务数
+    expr: rate(marathon_deployments_dismissed_counter[1m]) > 3
+    for: 1m
+    labels:
+      severity: 警告
+    annotations:
+      summary: Marathon dismissed 部署任务数大于3 (for the last 1 min)!
+      description: 废弃任务数={{ $value }}
+
+  - alert: Marathon计算资源
+    expr: rate(marathon_mesos_offers_used_counter[10m]) == 0 and rate(marathon_mesos_offers_incoming_counter[10m]) > 0.05
+    for: 10m
+    labels:
+      severity: 警告
+    annotations:
+      summary: Marathon资源匮乏 (for the last 10 min)!
+ 
+
+  - alert: Marathon HTTP请求
+    expr: avg_over_time(marathon_http_requests_active_gauge[10s]) > 100
+    for: 30s
+    labels:
+      severity: 严重
+    annotations:
+      summary: Marathon HTTP请求数超过100!
+      description: 等待任务数={{ $value }}
+
+  - alert: Marathon 5xx错误响应
+    expr: marathon_http_responses_5xx_rate_m1_rate > 0
+    for: 30s
+    labels:
+      severity: 严重
+    annotations:
+      summary: 出现错误5xx响应!
+      description: 错误请求数={{ $value }}
+      
+
+  - alert: Marathon启动实例监测
+    expr: marathon_instances_staged_gauge > 10
+    for: 30s
+    labels:
+      severity: 警告
+    annotations:
+      summary: Marathon目前正在启动实例过多(大于10个)!
+      description: 启动实例数={{ $value }}
+      
+

@@ -65,7 +65,7 @@ groups:
       description: 等待任务数={{ $value }}
 
   - alert: Marathon 5xx错误响应
-    expr: marathon_http_responses_5xx_rate_m1_rate > 0
+    expr: marathon_http_responses_5xx_rate_meter_m1_rate > 0
     for: 30s
     labels:
       severity: 严重

@@ -20,7 +20,7 @@ groups:
       description: 当前实例数={{ $value }} 
 
   - alert: Marathon Heap使用率
-    expr: avg_over_time(marathon_jvm_memory_heap_used_gauge_bytes[30s]) > (2 * 1024 * 1024 * 1024)
+    expr: avg_over_time(marathon_jvm_memory_heap_used_gauge_bytes[1m]) > (2 * 1024 * 1024 * 1024)
     for: 30s
     labels:
       severity: 严重
@@ -38,25 +38,17 @@ groups:
       description: 当前线程数={{ $value }}
 
   - alert: Marathon Dismissed任务数
-    expr: rate(marathon_deployments_dismissed_counter[1m]) > 3
-    for: 1m
+    expr: increase(marathon_deployments_dismissed_counter[1m]) > 3
+    for: 30s
     labels:
       severity: 警告
     annotations:
       summary: Marathon dismissed 部署任务数大于3 (for the last 1 min)!
       description: 废弃任务数={{ $value }}
-
-  - alert: Marathon计算资源
-    expr: rate(marathon_mesos_offers_used_counter[10m]) == 0 and rate(marathon_mesos_offers_incoming_counter[10m]) > 0.05
-    for: 10m
-    labels:
-      severity: 警告
-    annotations:
-      summary: Marathon资源匮乏 (for the last 10 min)!
  
 
   - alert: Marathon HTTP请求
-    expr: avg_over_time(marathon_http_requests_active_gauge[10s]) > 100
+    expr: marathon_http_requests_active_gauge > 100
     for: 30s
     labels:
       severity: 严重
@@ -65,7 +57,7 @@ groups:
       description: 等待任务数={{ $value }}
 
   - alert: Marathon 5xx错误响应
-    expr: marathon_http_responses_5xx_rate_meter_m1_rate > 0
+    expr: rate(marathon_http_responses_5xx_rate_meter_count[1m])> 0
     for: 30s
     labels:
       severity: 严重
@@ -75,7 +67,7 @@ groups:
       
 
   - alert: Marathon启动实例监测
-    expr: marathon_instances_staged_gauge > 10
+    expr: sum_over_time(marathon_instances_staged_gauge[1m]) > 10
     for: 30s
     labels:
       severity: 警告

@@ -1,7 +1,7 @@
 groups:
 - name: system
   rules:
-  - alert: mesos主机CPU使用过高
+  - alert: mesos主机CPU使用率过高
     expr: ceil(cpu_usage_system{cpu="cpu-total"} + cpu_usage_guest{cpu="cpu-total"} + cpu_usage_user{cpu="cpu-total"}) > 85
     for: 60s
     labels:

@@ -37,21 +37,21 @@ groups:
       description: 目前slave节点数={{$value}}
 
   - alert: mesos集群CPU分配百分比
-    expr: ceil(quantile_over_time(0,mesos_slave_cpus_percent{state="leader"}[5m])*100) > 90 
+    expr: ceil(quantile_over_time(0,mesos_slave_cpus_percent[5m])*100) > 90 
     for: 5m
     labels:
       severity: 警告
     annotations:
-      summary: slave集群的CPU分配百分比连续超过90%!
+      summary: slave集群{{$labels.host}}的CPU分配百分比连续超过90%!
       description: 总百分比={{$value}}%      
       
   - alert: mesos集群内存分配百分比
-    expr: ceil(quantile_over_time(0,mesos_slave_mem_percent{state="leader"}[5m])*100) > 90
+    expr: ceil(quantile_over_time(0,mesos_slave_mem_percent[5m])*100) > 90
     for: 5m
     labels:
       severity: 严重
     annotations:
-      summary: slave集群内存分配百分比连续超过90%!
+      summary: slave集群{{$labels.host}}的内存分配百分比连续超过90%!
       description: 总百分比={{$value}}%
       
   - alert: mesos master选举情况

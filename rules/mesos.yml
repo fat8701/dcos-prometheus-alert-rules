@@ -20,7 +20,7 @@ groups:
       description: 主机{{$labels.host}}-角色{{$labels.role}}发生重启,请检查服务  
       
   - alert: mesos master任务异常
-    expr: rate(mesos_master_tasks_lost[5m]) > 0
+    expr: delta(mesos_master_tasks_lost[5m]) > 0
     for: 5m
     labels:
       severity: 警告

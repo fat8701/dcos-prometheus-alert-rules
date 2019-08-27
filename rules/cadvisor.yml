@@ -2,12 +2,12 @@ groups:
 - name: cadvisor
   rules:
   - alert: 容器CPU使用率过高
-    expr: sum(rate(container_cpu_usage_seconds_total{name=~".+"}[5m])) without (cpu) * 100 > 0
+    expr: sum(rate(container_cpu_usage_seconds_total{name=~".+"}[5m])) without (cpu) * 100 > 85
     for: 5m
     labels:
       severity: 严重
     annotations:
-      summary: 容器{{$labels.container_label_MESOS_TASK_ID}}的CPU使用率{{$value}}%---{{ humanize $value}}%!
+      summary: 容器{{$labels.container_label_MESOS_TASK_ID}}的CPU使用率{{ humanize $value}}%!
       description: 主机{{$labels.instance}},镜像{{$labels.image}}
       
   - alert: 容器MEM使用率过高
@@ -20,7 +20,7 @@ groups:
       description: 主机{{$labels.instance}},镜像{{$labels.image}}
       
   - alert: fs读取速率超过1M/s
-    expr: sum(rate(container_fs_reads_bytes_total{image!=""}[5m])) without (device) > 1024^2
+    expr: sum(rate(container_fs_reads_bytes_total{image!=""}[5m])) without (device) > 0
     for: 5m
     labels:
       severity: 警告

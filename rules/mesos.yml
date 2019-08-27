@@ -3,7 +3,7 @@ groups:
   rules:
   - alert: mesos master健康状态
     expr: mesos_master_uptime_secs <60
-    for: 60s
+    for: 1m
     labels:
       severity: 警告
     annotations:
@@ -12,12 +12,30 @@ groups:
   
   - alert: mesos slave健康状态
     expr: mesos_slave_uptime_secs <60
-    for: 60s
+    for: 1m
     labels:
       severity: 警告
     annotations:
       summary: Mesos实例{{$labels.instance}}可能发生重启!
       description: 主机{{$labels.host}}-角色{{$labels.role}}发生重启,请检查服务  
+
+  - alert: mesos master 挂了
+    expr: absent(mesos_master_uptime_secs) 
+    for: 1m
+    labels:
+      severity: 严重
+    annotations:
+      summary: Mesos实例{{$labels.instance}}可能挂了!
+      description: 请检查主机{{$labels.host}}
+  
+  - alert: mesos slave 挂了
+    expr: absent(mesos_slave_uptime_secs)
+    for: 1m
+    labels:
+      severity: 严重
+    annotations:
+      summary: Mesos实例{{$labels.instance}}可能挂了!
+      description: 请检查主机{{$labels.host}}
       
   - alert: mesos master任务异常
     expr: delta(mesos_master_tasks_lost[5m]) > 0

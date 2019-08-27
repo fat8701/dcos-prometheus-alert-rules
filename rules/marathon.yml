@@ -1,14 +1,6 @@
 groups:
 - name: marathon
   rules:
-  - alert: Marathon运行状态
-    expr: up{job="marathon"} == 0
-    for: 30s
-    labels:
-      severity: 警告
-    annotations:
-      summary: Marathon实例出现异常!
-      description: "{{$labels.instance}}实例可能关闭或重启, 请检查Marathon服务"
       
   - alert: Marathon master集群检测
     expr: sum(up{job="master-metrics"}) < 2

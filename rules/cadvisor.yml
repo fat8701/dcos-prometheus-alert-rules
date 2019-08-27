@@ -20,7 +20,7 @@ groups:
       description: 主机{{$labels.instance}},镜像{{$labels.image}}
       
   - alert: fs读取速率超过1M/s
-    expr: sum(rate(container_fs_reads_bytes_total{image!=""}[5m])) without (device) > 1M
+    expr: sum(rate(container_fs_reads_bytes_total{image!=""}[5m])) without (device) > 1024^2
     for: 5m
     labels:
       severity: 警告
@@ -28,8 +28,8 @@ groups:
       summary: 容器{{$labels.container_label_MESOS_TASK_ID}}的读取速率{{$value}}B/s---{{ humanize $value}}B/s!
       description: 主机{{$labels.instance}},镜像{{$labels.image}}      
 
-  - alert: fs写入速率超过1M/s
-    expr: sum(rate(container_fs_writes_bytes_total{image!=""}[5m])) without (device) > 1M
+  - alert: "fs写入速率超过1M/s"
+    expr: sum(rate(container_fs_writes_bytes_total{image!=""}[5m])) without (device) > 1024^2
     for: 5m
     labels:
       severity: 警告
@@ -38,7 +38,7 @@ groups:
       description: 主机{{$labels.instance}},镜像{{$labels.image}}       
       
   - alert: network-in速率超过1M/s
-    expr: sum(rate(container_network_receive_bytes_total{image!=""}[5m])) without (interface) > 1M
+    expr: sum(rate(container_network_receive_bytes_total{image!=""}[5m])) without (interface) > 1024^2
     for: 5m
     labels:
       severity: 警告
@@ -47,7 +47,7 @@ groups:
       description: 主机{{$labels.instance}},镜像{{$labels.image}}       
 
   - alert: network-out速率超过1M/s
-    expr: sum(rate(container_network_transmit_bytes_total{image!=""}[5m])) without (interface) > 1M
+    expr: sum(rate(container_network_transmit_bytes_total{image!=""}[5m])) without (interface) > 1024^2
     for: 5m
     labels:
       severity: 警告

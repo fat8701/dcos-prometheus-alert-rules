@@ -11,7 +11,7 @@ groups:
       description: 主机{{$labels.instance}},镜像{{$labels.image}}
       
   - alert: 容器MEM使用率过高
-    expr: ceil(avg_over_time(container_memory_usage_bytes{name=~".+"}[5m]) / container_spec_memory_limit_bytes{name=~".+"} * 100) > 85
+    expr: ceil(avg_over_time(container_memory_usage_bytes{name=~".+"}[5m]) / container_spec_memory_limit_bytes{name=~".+"} * 100) > 85 and container_spec_memory_limit_bytes{name=~".+"}!=0
     for: 5m
     labels:
       severity: 严重
@@ -55,7 +55,7 @@ groups:
       summary: 容器{{$labels.container_label_MESOS_TASK_ID}}的上行速率{{ humanize $value}}B/s!
       description: 主机{{$labels.instance}},镜像{{$labels.image}}       
 
-  - alert: cadvisor状态异常!
+  - alert: cadvisor状态异常
     expr: up{job="cadvisor-metrics"}==0
     for: 30s
     labels:
@@ -64,7 +64,7 @@ groups:
       summary: cadvisor服务挂了
       description: 请检查{{$labels.instance}}服务！      
       
-  - alert: 容器bi-db状态异常!
+  - alert: 容器bi-db状态异常
     expr: absent(container_last_seen{container_label_MESOS_TASK_ID=~"bi-db.+"})
     for: 30s
     labels:
@@ -73,7 +73,7 @@ groups:
       summary: 容器bi-db全部挂了或者全部停止了
       description: 请检查dcos平台的bi-db服务！
 
-  - alert: 容器biapp状态异常!
+  - alert: 容器biapp状态异常
     expr: absent(container_last_seen{container_label_MESOS_TASK_ID=~"biapp.+"})
     for: 30s
     labels:

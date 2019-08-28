@@ -29,7 +29,7 @@ groups:
       description: 主机{{$labels.instance}},镜像{{$labels.image}}      
 
   - alert: "fs写入速率超过1M/s"
-    expr: sum(rate(container_fs_writes_bytes_total{image!=""}[1m])) without (device) > 0
+    expr: sum(rate(container_fs_writes_bytes_total{image!=""}[1m])) without (device) > 15*1024
     for: 1m
     labels:
       severity: 警告

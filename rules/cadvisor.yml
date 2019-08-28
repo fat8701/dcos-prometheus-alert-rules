@@ -70,8 +70,8 @@ groups:
     labels:
       severity: 警告
     annotations:
-      summary: 容器{{$labels.container_label_MESOS_TASK_ID}}全部挂了或者全部停止了.
-      description: 主机{{$labels.instance}},镜像{{$labels.image}}
+      summary: 容器python-demo全部挂了或者全部停止了.
+      description: 
       
 
 

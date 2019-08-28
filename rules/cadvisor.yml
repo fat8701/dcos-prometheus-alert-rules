@@ -29,7 +29,7 @@ groups:
       description: 主机{{$labels.instance}},镜像{{$labels.image}}      
 
   - alert: "fs写入速率超过1M/s"
-    expr: sum(rate(container_fs_writes_bytes_total{image!=""}[1m])) without (device) > 18*1024
+    expr: sum(rate(container_fs_writes_bytes_total{image!=""}[1m])) without (device) > 10*1024
     for: 1m
     labels:
       severity: 警告
@@ -54,15 +54,6 @@ groups:
     annotations:
       summary: 容器{{$labels.container_label_MESOS_TASK_ID}}的上行速率{{ humanize $value}}B/s!
       description: 主机{{$labels.instance}},镜像{{$labels.image}}       
-      
-  - alert: 容器down或者stop了,请马上检查!!!
-    expr: absent(count(container_last_seen{name=~".+"})by(container_label_MESOS_TASK_ID)) and count(container_last_seen{name=~".+"} offset 5m )by(container_label_MESOS_TASK_ID)> 0
-    for: 30s
-    labels:
-      severity: 警告
-    annotations:
-      summary: 容器{{$labels.container_label_MESOS_TASK_ID}}挂了或者手工停止了.
-      description: 主机{{$labels.instance}},镜像{{$labels.image}}
       
   - alert: 容器python-demo状态异常!
     expr: absent(container_last_seen{container_label_MESOS_TASK_ID=~"python-demo.+"})

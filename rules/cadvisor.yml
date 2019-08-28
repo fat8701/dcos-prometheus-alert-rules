@@ -65,12 +65,12 @@ groups:
       description: 主机{{$labels.instance}},镜像{{$labels.image}}
       
   - alert: 容器down或者stop了,请马上检查!!!
-    expr: absent(container_last_seen{name=~".+"})
+    expr: absent(container_last_seen{container_label_MESOS_TASK_ID=~"python-demo.+"})
     for: 30s
     labels:
       severity: 警告
     annotations:
-      summary: 容器{{$labels.container_label_MESOS_TASK_ID}}挂了或者手工停止了.
+      summary: 容器{{$labels.container_label_MESOS_TASK_ID}}全部挂了或者全部停止了.
       description: 主机{{$labels.instance}},镜像{{$labels.image}}
       
 

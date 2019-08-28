@@ -6,10 +6,19 @@ groups:
     expr: sum(up{job="master-metrics"}) < 2
     for: 30s
     labels:
-      severity: 严重
+      severity: 警告
     annotations:
       summary: Marathon master实例数量小于2, 集群异常!
       description: 当前实例数={{ $value }} 
+      
+  - alert: Marathon master状态异常
+    expr: up{job="master-metrics"}==0 or up{job="marathon-metrics"}==0
+    for: 30s
+    labels:
+      severity: 严重
+    annotations:
+      summary: master服务器可能挂了
+      description: 请马上检查服务器{{$labels.instance}}!    
 
   - alert: Marathon Heap使用率
     expr: avg_over_time(marathon_jvm_memory_heap_used_gauge_bytes[1m]) > (2 * 1024 * 1024 * 1024)

@@ -9,7 +9,7 @@ groups:
     annotations:
       summary: Mesos实例{{$labels.instance}}可能发生重启!
       description: 主机{{$labels.host}}-状态{{$labels.state}}发生重启,请检查服务
-  
+
   - alert: mesos slave健康状态
     expr: mesos_slave_uptime_secs <60
     for: 1m
@@ -19,23 +19,14 @@ groups:
       summary: Mesos实例{{$labels.instance}}可能发生重启!
       description: 主机{{$labels.host}}-角色{{$labels.role}}发生重启,请检查服务  
 
-  - alert: mesos master 挂了
-    expr: absent(mesos_master_uptime_secs) 
-    for: 1m
+  - alert: Mesos agent状态异常
+    expr: up{job="agent-metrics"}==0 
+    for: 30s
     labels:
       severity: 严重
     annotations:
-      summary: Mesos实例{{$labels.instance}}可能挂了!
-      description: 请检查主机{{$labels.host}}
-  
-  - alert: mesos slave 挂了
-    expr: absent(mesos_slave_uptime_secs)
-    for: 1m
-    labels:
-      severity: 严重
-    annotations:
-      summary: Mesos实例{{$labels.instance}}可能挂了!
-      description: 请检查主机{{$labels.host}}
+      summary: mesos agent服务器可能挂了
+      description: 请马上检查服务器{{$labels.instance}}! 
       
   - alert: mesos master任务异常
     expr: delta(mesos_master_tasks_lost[5m]) > 0
@@ -44,18 +35,9 @@ groups:
       severity: 警告
     annotations:
       summary: Mesos master出现任务丢失!
-      
-  - alert: mesos slave节点数
-    expr: mesos_master_slaves_active{state="leader"} < 3
-    for: 30s
-    labels:
-      severity: 严重
-    annotations:
-      summary: 出现slave节点异常!
-      description: 目前slave节点数={{$value}}
 
   - alert: mesos集群CPU分配百分比
-    expr: ceil(quantile_over_time(0,mesos_slave_cpus_percent[5m])*100) > 90 
+    expr: ceil(quantile_over_time(0,mesos_slave_cpus_percent[5m])*100) > 95 
     for: 5m
     labels:
       severity: 警告
@@ -64,7 +46,7 @@ groups:
       description: 总百分比={{$value}}%      
       
   - alert: mesos集群内存分配百分比
-    expr: ceil(quantile_over_time(0,mesos_slave_mem_percent[5m])*100) > 90
+    expr: ceil(quantile_over_time(0,mesos_slave_mem_percent[5m])*100) > 95
     for: 5m
     labels:
       severity: 严重

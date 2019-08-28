@@ -29,7 +29,7 @@ groups:
       description: 主机{{$labels.instance}},镜像{{$labels.image}}      
 
   - alert: "fs写入速率超过1M/s"
-    expr: sum(rate(container_fs_writes_bytes_total{image!=""}[1m])) without (device) > 15*1024
+    expr: sum(rate(container_fs_writes_bytes_total{image!=""}[1m])) without (device) > 20*1024
     for: 1m
     labels:
       severity: 警告
@@ -64,17 +64,32 @@ groups:
       summary: 容器{{$labels.container_label_MESOS_TASK_ID}}挂了或者手工停止了.
       description: 主机{{$labels.instance}},镜像{{$labels.image}}
       
-  - alert: 容器down或者stop了,请马上检查!!!
+  - alert: 容器python-demo状态异常!
     expr: absent(container_last_seen{container_label_MESOS_TASK_ID=~"python-demo.+"})
     for: 30s
     labels:
       severity: 警告
     annotations:
-      summary: 容器python-demo全部挂了或者全部停止了.
-      description: 
+      summary: 容器python-demo全部挂了或者全部停止了
+      description: 请检查dcos平台的python-demo服务
       
+  - alert: 容器bi-db状态异常!
+    expr: absent(container_last_seen{container_label_MESOS_TASK_ID=~"bi-db.+"})
+    for: 30s
+    labels:
+      severity: 严重
+    annotations:
+      summary: 容器bi-db全部挂了或者全部停止了
+      description: 请检查dcos平台的bi-db服务！
 
-
+  - alert: 容器biapp状态异常!
+    expr: absent(container_last_seen{container_label_MESOS_TASK_ID=~"biapp.+"})
+    for: 30s
+    labels:
+      severity: 严重
+    annotations:
+      summary: 容器biapp全部挂了或者全部停止了
+      description: 请检查dcos平台的biapp服务！
       
 
       

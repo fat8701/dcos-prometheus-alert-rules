@@ -17,7 +17,7 @@ groups:
     labels:
       severity: 严重
     annotations:
-      summary: master服务器可能挂了
+      summary: master服务器可能宕机
       description: 请马上检查服务器{{$labels.instance}}!    
 
   - alert: Marathon Heap使用率
